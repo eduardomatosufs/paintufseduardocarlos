@@ -10,6 +10,8 @@ def iniciar_figura_nova(event):
         figura_nova = ("retangulo", (event.x, event.y, event.x, event.y))
     elif tipo_figura_var.get() == "Círculo":
          figura_nova = ("circulo", (event.x,event.y))
+    elif tipo_figura_var.get() == "Oval":
+         figura_nova = ("oval", (event.x,event.y, event.x, event.y))
     else:
         figura_nova = ("rabisco", [(event.x, event.y)])
 
@@ -38,31 +40,35 @@ def incluir_figura_nova(event):
 def desenhar_figuras():
     canvas.delete("all")
     for fig, values in figuras:
-        if fig == "linha":
+        if fig == 'linha':
             canvas.create_line(values[0], values[1], values[2], values[3])
-        elif fig == "retangulo":
+        elif fig == 'retangulo':
             canvas.create_rectangle(values[0], values[1], values[2], values[3])
-        elif fig == "circulo":
+        elif fig == 'circulo':
              canvas.create_oval(values[0]-values[2],values[1]-values[2],values[0]+values[2],values[1]+values[2])
+        elif fig == 'oval':
+             canvas.create_oval(values[0],values[1],values[2],values[3])
         else:
             canvas.create_line(values)
 
 def desenhar_figura_nova():
     fig, values = figura_nova
-    if fig == "linha":
+    if fig == 'linha':
         canvas.create_line(values[0], values[1], values[2], values[3], dash=(4, 2))
-    elif fig == "retangulo":
+    elif fig == 'retangulo':
         canvas.create_rectangle(values[0], values[1], values[2], values[3], dash=(4, 2))
     elif fig == 'circulo':
-        canvas.create_oval(values[0]-values[2],values[1]-values[2],values[0]+values[2],values[1]+values[2], dash = (4,2))
+        canvas.create_oval(values[0]-values[2],values[1]-values[2],values[0]+values[2],values[1]+values[2], dash=(4,2))
+    elif fig == 'oval':
+        canvas.create_oval(values[0],values[1],values[2],values[3], dash=(4, 2))
     else:
         canvas.create_line(values, dash=(4, 2))
 
 def incompleta(figura):
     fig, values = figura
-    if fig == "rabisco":
+    if fig == 'rabisco':
         return len(values) <= 1
-    elif fig == "circulo":
+    elif fig == 'circulo':
         return len(values) <= 2 or values[2] == 0
     else:
         return (values[0], values[1]) == (values[2], values[3])
@@ -81,7 +87,7 @@ label.grid(column=0, row=0, sticky=W, **paddings)
 
 tipo_figura_var = StringVar(root)
 option_menu = ttk.OptionMenu(frame, tipo_figura_var,
-                             'Linha', 'Linha', 'Rabisco', 'Retângulo','Círculo')
+                             'Linha', 'Linha', 'Rabisco', 'Retângulo','Círculo', 'Oval')
 option_menu.grid(column=1, row=0, sticky=W, **paddings)
 
 canvas = Canvas(frame, bg='white', width=600, height=600)
