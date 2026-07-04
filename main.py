@@ -2,103 +2,73 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import colorchooser
 
-# Quando mouse é pressionado
+from figura import Figura
+from linha import Linha
+from rabisco import Rabisco
+from retangulo import Retangulo
+from circulo import Circulo
+from oval import Oval
+
+# Cria o objeto da figura no clique
 def iniciar_figura_nova(event):
     global figura_nova
-    if tipo_figura_var.get() == 'Linha':
-         figura_nova = ("linha", (event.x, event.y, event.x, event.y),(cor_borda,cor_preenchimento))
+    if tipo_figura_var.get() == "Linha":
+        figura_nova = Linha(cor_borda,cor_preenchimento,event.x,event.y,event.x,event.y)
     elif tipo_figura_var.get() == "Retângulo":
-         figura_nova = ("retangulo", (event.x, event.y, event.x, event.y),(cor_borda,cor_preenchimento))
+        figura_nova = Retangulo(cor_borda,cor_preenchimento,event.x,event.y,event.x,event.y)
     elif tipo_figura_var.get() == "Círculo":
-         figura_nova = ("circulo", (event.x,event.y),(cor_borda,cor_preenchimento))
+        figura_nova = Circulo(cor_borda,cor_preenchimento,event.x,event.y,0)
     elif tipo_figura_var.get() == "Oval":
-         figura_nova = ("oval", (event.x,event.y, event.x, event.y),(cor_borda,cor_preenchimento))
+        figura_nova = Oval(cor_borda,cor_preenchimento,event.x,event.y,event.x,event.y)
     else:
-         figura_nova = ("rabisco", [(event.x, event.y)],(cor_borda,cor_preenchimento))
+        figura_nova = Rabisco(cor_borda,cor_preenchimento,[(event.x,event.y)])
 
-# Quando mouse é movido com o botão pressionado
+# Atualiza quando arrasta
 def atualizar_figura_nova(event):
     global figura_nova
-    if figura_nova[0] == "rabisco":
-        figura_nova[1].append((event.x, event.y))
-    elif figura_nova[0] == "circulo":
-         centro_x = figura_nova[1][0]
-         centro_y = figura_nova[1][1]
-         raio = ((event.x-centro_x)**2 + (event.y - centro_y)**2)**0.5 # Distância entre o centro e a posicao do mouse
-         figura_nova = ("circulo",(centro_x,centro_y,raio), figura_nova[2])
+    if isinstance(figura_nova,Rabisco):
+       figura_nova.pontos.append((event.x,event.y))
+    elif isinstance(figura_nova,Circulo):
+        raio = ((event.x-figura_nova.centro_x)**2 + (event.y - figura_nova.centro_y)**2)**0.5 # Distancia entre o centro e o mouse 
+        figura_nova.raio = raio
     else:
-        figura_nova = (figura_nova[0], (figura_nova[1][0], figura_nova[1][1], event.x, event.y), figura_nova[2])
+        figura_nova.x2 = event.x
+        figura_nova.y2 = event.y
     desenhar_figuras()
     desenhar_figura_nova()
-    
 
-# Adiciona a figura à lista 
+# Salva a figura na lista se nao for vazia
 def incluir_figura_nova(event):
-    if not incompleta(figura_nova):
-        figuras.append(figura_nova)
-    desenhar_figuras()
+   if not figura_nova.vazia():
+       figuras.append(figura_nova)
+   desenhar_figuras()
 
-# Limpa a tela e redesenha todas as figuras salvas
+# Limpa a tela e cada objeto se desenha
 def desenhar_figuras():
     canvas.delete("all")
-    for fig, values,cores in figuras:
-        cor_borda = cores[0]
-        cor_preenchimento = cores[1]
-        if fig == 'linha':
-            canvas.create_line(values[0], values[1], values[2], values[3],fill=cor_borda)
-        elif fig == 'retangulo':
-            canvas.create_rectangle(values[0], values[1], values[2], values[3],outline=cor_borda,fill=cor_preenchimento)
-        elif fig == 'circulo':
-             canvas.create_oval(values[0]-values[2],values[1]-values[2],values[0]+values[2],values[1]+values[2],outline=cor_borda,fill=cor_preenchimento)
-        elif fig == 'oval':
-             canvas.create_oval(values[0],values[1],values[2],values[3],outline=cor_borda,fill=cor_preenchimento)
-        else:
-            canvas.create_line(values,fill=cor_borda)
+    for figura in figuras:
+        figura.desenha(canvas)
 
-# Desenha o tracejado da figura nova
+# Cada objeto faz o tracejado
 def desenhar_figura_nova():
-    fig, values, cores = figura_nova
-    cor_borda = cores[0]
-    cor_preenchimento = cores[1]
-    if fig == 'linha':
-        canvas.create_line(values[0], values[1], values[2], values[3], dash=(4, 2), fill=cor_borda)
-    elif fig == 'retangulo':
-        canvas.create_rectangle(values[0], values[1], values[2], values[3], dash=(4, 2),outline=cor_borda,fill=cor_preenchimento)
-    elif fig == 'circulo':
-        canvas.create_oval(values[0]-values[2],values[1]-values[2],values[0]+values[2],values[1]+values[2], dash=(4,2),outline=cor_borda,fill=cor_preenchimento)
-    elif fig == 'oval':
-        canvas.create_oval(values[0],values[1],values[2],values[3], dash=(4, 2),outline=cor_borda,fill=cor_preenchimento)
-    else:
-        canvas.create_line(values, dash=(4, 2),fill=cor_borda)
+    figura_nova.desenha(canvas, dash=(4,2))
 
-# Olha se a figura é válida
-def incompleta(figura):
-    fig, values, cores = figura
-    if fig == 'rabisco':
-        return len(values) <= 1
-    elif fig == 'circulo':
-        return len(values) <= 2 or values[2] == 0
-    elif fig == 'linha': 
-        return (values[0], values[1]) == (values[2], values[3])
-    else:
-        largura = abs(values[2] - values[0])
-        altura = abs(values[3] - values[1])
-        return largura == 0 or altura == 0
-# Abre o seletor das cores e guarda a escolhida para a borda
+# Seletor e guarda a cor da borda
 def escolher_cor_borda():
-   global cor_borda 
-   cor = colorchooser.askcolor()
-   cor_borda = cor[1]
+    global cor_borda
+    cor = colorchooser.askcolor()
+    cor_borda = cor[1]
 
-# Abre o seletor das cores e guarda a escolhida para o preenchimento
+# Seletor e guarda a cor de preenchimento
 def escolher_cor_preenchimento():
     global cor_preenchimento
     cor = colorchooser.askcolor()
     cor_preenchimento = cor[1]
 
+
 #******* MAIN *******#
-figuras = []        # Todas as figuras desenhadas
-figura_nova = None  # Figura sendo desenhada, ainda não incluída em figuras
+figuras = []        # lista de objetos Figura
+figura_nova = None  # figura sendo desenhada, ainda não incluída na lista
 cor_borda = "black" # cor inicial da borda
 cor_preenchimento = "" # "" quer dizer sem preenchimento
 
