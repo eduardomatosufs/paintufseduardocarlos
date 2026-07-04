@@ -78,9 +78,12 @@ def incompleta(figura):
         return len(values) <= 1
     elif fig == 'circulo':
         return len(values) <= 2 or values[2] == 0
-    else:
+    elif fig == 'linha': 
         return (values[0], values[1]) == (values[2], values[3])
-    
+    else:
+        largura = abs(values[2] - values[0])
+        altura = abs(values[3] - values[1])
+        return largura == 0 or altura == 0
 # Abre o seletor das cores e guarda a escolhida para a borda
 def escolher_cor_borda():
    global cor_borda 
