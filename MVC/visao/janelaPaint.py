@@ -16,7 +16,7 @@ class JanelaPaint:
 
         self.tipo_figura_var = StringVar(self.root)
         self.option_menu = ttk.OptionMenu(self.frame, self.tipo_figura_var,
-                                           'Linha', 'Linha', 'Rabisco', 'Retângulo', 'Círculo', 'Oval')
+                                           'Linha', 'Linha', 'Rabisco', 'Retângulo', 'Círculo', 'Oval', 'Quadrado')
         self.option_menu.grid(column=1, row=0, sticky=W, **paddings)
 
         # Area de desenho

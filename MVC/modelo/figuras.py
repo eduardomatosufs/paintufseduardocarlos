@@ -116,3 +116,8 @@ class Rabisco(Figura):
     # Rabisco vazio (1 ponto ou menos)
     def vazia(self):
         return len(self.pontos) <= 1
+    
+# Classe concreta Quadrado, herda esttutura e comportamento de Retangulo
+@dataclass
+class Quadrado(Retangulo):
+      pass
