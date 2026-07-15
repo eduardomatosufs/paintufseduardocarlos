@@ -30,6 +30,13 @@ class JanelaPaint:
         self.botao_preenchimento = ttk.Button(self.frame, text='Cor de preenchimento', command=self.escolher_cor_preenchimento)
         self.botao_preenchimento.grid(column=1, row=2, **paddings)
 
+        # Botoes de Salvar e Abrir (sem command: o Controlador conecta depois)
+        self.botao_salvar = ttk.Button(self.frame, text='Salvar')
+        self.botao_salvar.grid(column=0, row=3, **paddings)
+
+        self.botao_abrir = ttk.Button(self.frame, text='Abrir')
+        self.botao_abrir.grid(column=1, row=3, **paddings)
+
         self.frame.pack()
 
         # cores atuais escolhidas pelo usuario
