@@ -56,3 +56,15 @@ class Desenho:
         posicao = self.__figuras.index(self.__selecionada)
         if posicao > 0:
             self.__figuras[posicao], self.__figuras[posicao - 1] = self.__figuras[posicao - 1], self.__figuras[posicao]
+
+    # Remove a selecionada da posicao atual e adiciona no final da lista 
+    def selecionada_para_topo(self):
+      if self.__selecionada != None:
+        self.__figuras.remove(self.__selecionada)
+        self.__figuras.append(self.__selecionada)
+
+    # Remove a selecionada da posicao atual e adiciona no inicio da lista 
+    def selecionada_para_fundo(self):
+        if self.__selecionada != None:
+           self.__figuras.remove(self.__selecionada)
+           self.__figuras.insert(0,self.__selecionada)
