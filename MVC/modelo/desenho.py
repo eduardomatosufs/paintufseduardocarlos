@@ -1,11 +1,13 @@
 from modelo.figuras import *
 import pickle
+import copy
 
 # Classe Desenho, guarda e gerencia todas as figuras (o Model)
 class Desenho:
     def __init__(self):
         self.__figuras = []      # todas as figuras desenhadas
         self.__selecionada = None # nenhuma figura selecionada no comeco
+        self.__buffer = None
 
     # Adiciona uma figura à lista
     def adiciona_figura(self, figura):
@@ -68,3 +70,15 @@ class Desenho:
         if self.__selecionada != None:
            self.__figuras.remove(self.__selecionada)
            self.__figuras.insert(0,self.__selecionada)
+    
+    # Copia a figura selecionada pro buffer (fica pronta pra ser colada depois)
+    def copiar_selecionada(self):
+       if self.__selecionada != None:
+          figura_nova = copy.deepcopy(self.__selecionada)
+          self.__buffer = figura_nova
+    
+    # Adiciona uma copia nova do que esta no buffer, sem afetar a figura original
+    def colar(self):
+       if self.__buffer != None:
+          figura_nova = copy.deepcopy(self.__buffer)
+          self.adiciona_figura(figura_nova)

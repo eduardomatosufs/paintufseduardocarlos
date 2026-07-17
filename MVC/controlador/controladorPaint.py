@@ -4,6 +4,7 @@ from modelo.figuras import *
 from modelo.desenho import *
 from visao.janelaPaint import *
 from tkinter import filedialog
+from controlador.controladorSelecao import *
 
 #  Classe ControladorPaint: recebe os eventos do mouse, atualiza o Model (desenho)
 # e pede que a View (visao) mostre o resultado
@@ -12,7 +13,7 @@ class ControladorPaint:
         self.desenho = desenho
         self.visao = visao
         self.canvas = self.visao.canvas
-
+    
         # Dicionario com uma instancia de cada Ferramenta
         self.ferramentas = {
             "Linha": Linha_Ferramenta(visao, desenho),
@@ -32,6 +33,9 @@ class ControladorPaint:
         # Liga os botoes de Salvar e Abrir aos metodos do controlador
         self.visao.botao_salvar.config(command=self.salvar)
         self.visao.botao_abrir.config(command=self.abrir)
+
+        # Cria o controlador de selecao (liga as teclas do teclado)
+        self.controlador_selecao = ControladorSelecao(self.desenho, self.visao)
 
     # Troca o estado atual baseado na ferramenta escolhida na interface,
     # e transfere o clique pra ferramenta criar a figura_nova
